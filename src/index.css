@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap');
+
+/* ── Design Tokens ── */
+:root {
+  --bg-base:        #0a0d14;
+  --bg-panel:       #111622;
+  --bg-card:        #161c2d;
+  --bg-card-hover:  #1c2438;
+  --border:         rgba(255,255,255,0.07);
+  --border-accent:  rgba(255,255,255,0.14);
+
+  --pro:      #22c55e;   /* green — FOR the claim  */
+  --pro-dim:  #16a34a33;
+  --con:      #f43f5e;   /* rose  — AGAINST        */
+  --con-dim:  #f43f5e2a;
+  --judge:    #a78bfa;   /* violet — Groq judge    */
+  --judge-dim:#a78bfa25;
+  --gold:     #f59e0b;
+
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #475569;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-glow-pro: 0 0 20px rgba(34,197,94,0.2);
+  --shadow-glow-con: 0 0 20px rgba(244,63,94,0.2);
+  --shadow-glow-judge: 0 0 20px rgba(167,139,250,0.25);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 3px; }
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes slideInLeft  { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
+@keyframes slideInRight { from { opacity:0; transform:translateX( 20px); } to { opacity:1; transform:translateX(0); } }
+
+.anim-fade-up   { animation: fadeInUp   0.5s ease forwards; }
+.anim-fade-in   { animation: fadeIn     0.4s ease forwards; }
+.anim-slide-l   { animation: slideInLeft  0.45s ease forwards; }
+.anim-slide-r   { animation: slideInRight 0.45s ease forwards; }
+
+/* ── Skeleton loader ── */
+.skeleton {
+  background: linear-gradient(90deg, #1e2a3a 25%, #253044 50%, #1e2a3a 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Utility ── */
+.text-pro   { color: var(--pro); }
+.text-con   { color: var(--con); }
+.text-judge { color: var(--judge); }
+.text-muted { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 3px 10px;
+  border-radius: 100px; border: 1px solid;
+}
+.badge-pro   { color: var(--pro);   background: var(--pro-dim);   border-color: var(--pro); }
+.badge-con   { color: var(--con);   background: var(--con-dim);   border-color: var(--con); }
+.badge-judge { color: var(--judge); background: var(--judge-dim); border-color: var(--judge); }
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+  margin: 28px 0;
+}
+
+/* ── Score bar ── */
+.score-bar-track {
+  height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+.score-bar-fill.pro { background: linear-gradient(90deg, #16a34a, #22c55e); }
+.score-bar-fill.con { background: linear-gradient(90deg, #be123c, #f43f5e); }
