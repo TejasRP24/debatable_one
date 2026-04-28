@@ -27,6 +27,35 @@ const API_MAP = {
   [MODELS.GROQ]:   { debate: getGroqResponse,   synthesize: getGroqSynthesis   },
 };
 
+// ─────────────────────────────────────────────────────────────
+//  RETRY HELPER
+//  Retries a function if it fails with a "high demand" error.
+// ─────────────────────────────────────────────────────────────
+
+async function withRetry(fn, args) {
+  let attempts = 0;
+  const maxAttempts = 5;
+  const delay = 5000; // 5 seconds as requested
+
+  while (attempts < maxAttempts) {
+    try {
+      return await fn(args);
+    } catch (err) {
+      attempts++;
+      const isRateLimit = err.message.toLowerCase().includes("high demand") || 
+                          err.message.toLowerCase().includes("rate limit") ||
+                          err.message.toLowerCase().includes("429");
+
+      if (isRateLimit && attempts < maxAttempts) {
+        console.warn(`Model busy. Retrying in 5s... (Attempt ${attempts}/${maxAttempts})`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      } else {
+        throw err;
+      }
+    }
+  }
+}
+
 
 // ─────────────────────────────────────────────────────────────
 //  COLLAPSE POINT DETECTOR
@@ -205,13 +234,16 @@ export async function runDebate({
   for (let round = 1; round <= rounds; round++) {
 
     // ── Positive turn (argues FOR the claim) ──────────────
-    const posResponse = await API_MAP[positiveModel].debate({
-      topic,
-      role: "positive",
-      history,
-      opponentMessage: lastMessage,
-      model: positiveModelId, 
-    });
+    const posResponse = await withRetry(
+      API_MAP[positiveModel].debate,
+      {
+        topic,
+        role: "positive",
+        history,
+        opponentMessage: lastMessage,
+        model: positiveModelId,
+      }
+    );
 
     const posCitations = extractCitations(posResponse.content);
     const posScore     = scoreArgument(
@@ -234,13 +266,16 @@ export async function runDebate({
     onTurnComplete({ round, turn: "positive", ...posTurn });
 
     // ── Negative turn (argues AGAINST the claim) ──────────
-    const negResponse = await API_MAP[negativeModel].debate({
-      topic,
-      role: "negative",
-      history,
-      opponentMessage: lastMessage,
-      model: negativeModelId,
-    });
+    const negResponse = await withRetry(
+      API_MAP[negativeModel].debate,
+      {
+        topic,
+        role: "negative",
+        history,
+        opponentMessage: lastMessage,
+        model: negativeModelId,
+      }
+    );
 
     const negCitations = extractCitations(negResponse.content);
     const negScore     = scoreArgument(negResponse.content, posResponse.content);
@@ -268,11 +303,14 @@ export async function runDebate({
   }
 
   // ── Judge generates the final verdict ─────────────────
-  const synthesis = await API_MAP[judgeModel].synthesize({
-    topic,
-    fullDebateHistory: history,
-    model: judgeModelId,
-  });
+  const synthesis = await withRetry(
+    API_MAP[judgeModel].synthesize,
+    {
+      topic,
+      fullDebateHistory: history,
+      model: judgeModelId,
+    }
+  );
 
   // ── Collapse point detection ───────────────────────────────
   const collapsePoint = detectCollapsePoint(history);

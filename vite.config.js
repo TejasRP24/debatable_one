@@ -18,6 +18,7 @@ export default defineConfig({
         target: 'https://generativelanguage.googleapis.com',
         changeOrigin: true,
         secure: true,
+        timeout: 60000,
         rewrite: (path) => path.replace(/^\/proxy\/gemini/, ''),
       },
       // All /proxy/groq/* calls → https://api.groq.com/*
@@ -25,6 +26,7 @@ export default defineConfig({
         target: 'https://api.groq.com',
         changeOrigin: true,
         secure: true,
+        timeout: 60000,
         rewrite: (path) => path.replace(/^\/proxy\/groq/, ''),
       },
     },

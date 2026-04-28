@@ -119,6 +119,9 @@ HALLUCINATION FLAGS
 RECOMMENDED NEXT STEPS
 [3 practical steps the user should take]
 
+FINAL FILING RECOMMENDATION
+[Either 'FILE CASE' or 'DO NOT FILE CASE' in bold, followed by a 1-sentence logic for this decision.]
+
 DISCLAIMER
 This is not legal advice. Please consult a licensed advocate.`,
         },
@@ -128,7 +131,7 @@ This is not legal advice. Please consult a licensed advocate.`,
         },
       ],
       temperature: 0.3,
-      max_tokens: 500,
+      max_tokens: 800,
     }),
   });
 

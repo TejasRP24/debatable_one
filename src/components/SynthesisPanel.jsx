@@ -13,6 +13,7 @@ export default function SynthesisPanel({ synthesis, strengthScores, collapsePoin
     { key: 'ARGUMENT COLLAPSE POINT',            label: 'Argument Collapse Point',  icon: '⚠️' },
     { key: 'HALLUCINATION FLAGS',                label: 'Hallucination Flags',      icon: '🔍' },
     { key: 'RECOMMENDED NEXT STEPS',             label: 'Recommended Next Steps',   icon: '🗺️' },
+    { key: 'FINAL FILING RECOMMENDATION',       label: 'Final Verdict',            icon: '⚖️' },
   ];
 
   const parsed = sections.map((s) => ({
@@ -39,12 +40,34 @@ export default function SynthesisPanel({ synthesis, strengthScores, collapsePoin
         {showRaw ? (
           <pre className="synthesis-text">{synthesis}</pre>
         ) : (
-          parsed.map((s, i) => (
-            <div key={i} className="verdict-section">
-              <div className="verdict-section-title">{s.icon} {s.label}</div>
-              <div className="verdict-block">{s.content}</div>
-            </div>
-          ))
+          parsed.map((s, i) => {
+            const isVerdict = s.key === 'FINAL FILING RECOMMENDATION';
+            
+            if (isVerdict) {
+              const text = s.content || '';
+              const isFile = text.toUpperCase().includes('FILE CASE') && !text.toUpperCase().includes('DO NOT');
+              const cleanText = text.replace(/\*\*(.*?)\*\*/g, '$1'); // Strip markdown bold
+              
+              return (
+                <div key={i} className="final-verdict-card">
+                  <div className="verdict-section-title">{s.icon} {s.label}</div>
+                  <div className="verdict-badge-container">
+                    <span className={`verdict-badge ${isFile ? 'file' : 'no-file'}`}>
+                      {isFile ? '✅ FILE CASE' : '❌ DO NOT FILE CASE'}
+                    </span>
+                  </div>
+                  <div className="verdict-logic">{cleanText}</div>
+                </div>
+              );
+            }
+
+            return (
+              <div key={i} className="verdict-section">
+                <div className="verdict-section-title">{s.icon} {s.label}</div>
+                <div className="verdict-block">{s.content}</div>
+              </div>
+            );
+          })
         )}
 
         {/* Per-round strength chart */}

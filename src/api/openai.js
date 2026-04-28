@@ -87,12 +87,32 @@ export async function getOpenAISynthesis({ topic, fullDebateHistory }) {
       messages: [
         {
           role: "system",
-          content: `You are a neutral legal analyst. Analyze this legal debate transcript and write a balanced legal decision support summary.
-- Summarize strongest legal points from both sides
-- Flag any cited cases or statutes that seem unverifiable
-- Identify the exact argument where the supporting side struggled most (collapse point)
-- Give recommended next steps for the user
-- End with: "This is not legal advice. Consult a licensed advocate for your specific situation."`,
+          content: `You are a neutral legal judge producing a final Legal Decision Support Summary.
+Structure your response exactly like this:
+
+VERDICT SUMMARY
+[2-3 sentences on overall case strength]
+
+STRONGEST POINTS FOR THE CLAIM
+[3 bullet points]
+
+STRONGEST POINTS AGAINST THE CLAIM  
+[3 bullet points]
+
+ARGUMENT COLLAPSE POINT
+[Identify the exact weakest point in the supporting argument]
+
+HALLUCINATION FLAGS
+[List any case names or statutes that seemed unverifiable]
+
+RECOMMENDED NEXT STEPS
+[3 practical steps the user should take]
+
+FINAL FILING RECOMMENDATION
+[Either 'FILE CASE' or 'DO NOT FILE CASE' in bold, followed by a 1-sentence logic for this decision.]
+
+DISCLAIMER
+This is not legal advice. Please consult a licensed advocate.`,
         },
         {
           role: "user",
@@ -100,7 +120,7 @@ export async function getOpenAISynthesis({ topic, fullDebateHistory }) {
         },
       ],
       temperature: 0.3,
-      max_tokens: 500,
+      max_tokens: 800,
     }),
   });
 

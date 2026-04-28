@@ -401,3 +401,55 @@
   .topic-submit-btn { width: 100%; justify-content: center; }
   .navbar-models { display: none; }
 }
+/* ── Final Verdict Card ── */
+.final-verdict-card {
+  margin-top: 24px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 2px solid var(--judge);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(167,139,250,0.15);
+  animation: glow-border 2s infinite alternate;
+}
+
+@keyframes glow-border {
+  from { border-color: rgba(167,139,250,0.4); }
+  to   { border-color: rgba(167,139,250,0.8); }
+}
+
+.verdict-badge-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.verdict-badge {
+  font-size: 18px;
+  font-weight: 800;
+  padding: 12px 32px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.verdict-badge.file {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+  border: 2px solid #4ade80;
+}
+
+.verdict-badge.no-file {
+  background: linear-gradient(135deg, #be123c, #f43f5e);
+  color: #fff;
+  border: 2px solid #fb7185;
+}
+
+.verdict-logic {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.8;
+  text-align: center;
+  font-style: italic;
+  padding: 0 10px;
+}
